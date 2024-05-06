@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lip_reading/features/onboarding/widgets/Lipreading_logo_and_name.dart';
+import 'package:lip_reading/features/onboarding/widgets/lipreading_logo_and_name.dart';
 import 'package:lip_reading/features/onboarding/widgets/get_started_button.dart';
 import 'package:lip_reading/features/onboarding/widgets/image_and_text.dart';
 

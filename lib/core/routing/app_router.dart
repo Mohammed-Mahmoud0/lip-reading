@@ -1,9 +1,9 @@
 
-
 import 'package:flutter/material.dart';
 import 'package:lip_reading/core/routing/routes.dart';
-import 'package:lip_reading/features/login/ui/login_screen.dart';
 import 'package:lip_reading/features/onboarding/onboarding_screen.dart';
+
+import '../../features/login/ui/login_screen.dart';
 
 class AppRouter {
   Route generateRoute(RouteSettings settings) {
