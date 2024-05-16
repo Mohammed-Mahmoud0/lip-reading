@@ -1,4 +1,6 @@
 
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/features/onboarding/onboarding_screen.dart';

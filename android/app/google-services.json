@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615747681778",
+    "project_id": "lip-reading-b0adc",
+    "storage_bucket": "lip-reading-b0adc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615747681778:android:af0f83c2a4c8a132a7ff6b",
+        "android_client_info": {
+          "package_name": "com.example.lip_reading"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd1YfNOXDjScoFj_Txf9dNjb1JXacwDgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
