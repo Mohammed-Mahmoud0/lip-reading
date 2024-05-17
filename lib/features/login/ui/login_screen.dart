@@ -19,6 +19,29 @@ class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   bool isObscureText = true;
 
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 6 characters long';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +67,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   key: formKey,
                   child: Column(
                     children: [
-                      const AppTextFormField(
+                      AppTextFormField(
                         hintText: 'Email',
+                        myController: email,
+                        validator: validateEmail,
                       ),
                       verticalSpace(18),
                       AppTextFormField(
                         hintText: 'Password',
                         isObscureText: isObscureText,
+                        myController: password,
+                        validator: validatePassword,
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
@@ -76,7 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       AppTextButton(
                         buttonText: 'Login',
                         textStyle: TextStyles.font16whitesemibold,
-                        onPressed: () {},
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            // Proceed with the form submission
+                          }
+                        },
                       ),
                       verticalSpace(16),
                       const TermsAndConditionsText(),

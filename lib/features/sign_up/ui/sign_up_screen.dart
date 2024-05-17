@@ -15,8 +15,47 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  TextEditingController name = TextEditingController();
+  TextEditingController phone = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
   bool isObscureText = true;
+
+  String? validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your name';
+    }
+    return null;
+  }
+
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    return null;
+  }
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    }
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 6 characters long';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +82,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   key: formKey,
                   child: Column(
                     children: [
-                      const AppTextFormField(
+                      AppTextFormField(
                         hintText: 'Name',
-                      ),
-                      const AppTextFormField(
-                        hintText: 'Phone number',
+                        myController: name,
+                        validator: validateName,
                       ),
                       verticalSpace(18),
-                      const AppTextFormField(
+                      AppTextFormField(
+                        hintText: 'Phone number',
+                        myController: phone,
+                        validator: validatePhone,
+                      ),
+                      verticalSpace(18),
+                      AppTextFormField(
                         hintText: 'Email',
+                        myController: email,
+                        validator: validateEmail,
                       ),
                       verticalSpace(18),
                       AppTextFormField(
                         hintText: 'Password',
+                        myController: password,
+                        validator: validatePassword,
                         isObscureText: isObscureText,
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -82,7 +130,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       AppTextButton(
                         buttonText: 'Create Account',
                         textStyle: TextStyles.font16whitesemibold,
-                        onPressed: () {},
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            // Proceed with the form submission
+                          }
+
+                        },
                       ),
                       verticalSpace(16),
                       const TermsAndConditionsText(),

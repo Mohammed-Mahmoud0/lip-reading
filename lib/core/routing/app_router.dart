@@ -1,8 +1,8 @@
-
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:lip_reading/core/routing/routes.dart';
+import 'package:lip_reading/features/home_page/home_page_screen.dart';
 import 'package:lip_reading/features/onboarding/onboarding_screen.dart';
 import 'package:lip_reading/features/sign_up/ui/sign_up_screen.dart';
 
@@ -25,6 +25,10 @@ class AppRouter {
       case Routes.signupScreen:
         return MaterialPageRoute(
           builder: (_) => const SignUpScreen(),
+        );
+      case Routes.homepageScreen:
+        return MaterialPageRoute(
+          builder: (_) => const HomePageScreen(),
         );
       default:
         return MaterialPageRoute(
