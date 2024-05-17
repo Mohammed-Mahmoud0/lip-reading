@@ -1,5 +1,11 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously, unused_local_variable
+
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lip_reading/core/helpers/extensions.dart';
+import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/features/login/ui/widgets/dont_have_account_text.dart';
 import 'package:lip_reading/features/login/ui/widgets/terms_and_conditions_text.dart';
 
@@ -37,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return 'Please enter your password';
     }
     if (value.length < 8) {
-      return 'Password must be at least 6 characters long';
+      return 'Password must be at least 8 characters long';
     }
     return null;
   }
@@ -103,9 +109,43 @@ class _LoginScreenState extends State<LoginScreen> {
                       AppTextButton(
                         buttonText: 'Login',
                         textStyle: TextStyles.font16whitesemibold,
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            // Proceed with the form submission
+                            try {
+                              final credential = await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                email: email.text,
+                                password: password.text,
+                              );
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.success,
+                                animType: AnimType.rightSlide,
+                                title: 'Success',
+                                desc:
+                                    'Congratulations, you have logged in successfully',
+                                btnCancelOnPress: () {},
+                                btnOkOnPress: () {
+                                  context.pushReplacementNamed(
+                                      Routes.homepageScreen);
+                                },
+                              ).show();
+                            } on FirebaseAuthException catch (e) {
+                              if (e.code == 'user-not-found') {
+                                print('No user found for that email.');
+                              } else if (e.code == 'wrong-password') {
+                                print('Wrong password provided for that user.');
+                              }                           
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.rightSlide,
+                                title: 'Error',
+                                desc: 'Email or Password is incorrect',
+                                btnCancelOnPress: () {},
+                                btnOkOnPress: () {},
+                              ).show();
+                            }
                           }
                         },
                       ),

@@ -1,6 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_print
+
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/helpers/spacing.dart';
+import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/core/theming/style.dart';
 import 'package:lip_reading/core/widgets/app_text_button.dart';
 import 'package:lip_reading/core/widgets/app_text_form_field.dart';
@@ -52,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return 'Please enter your password';
     }
     if (value.length < 8) {
-      return 'Password must be at least 6 characters long';
+      return 'Password must be at least 8 characters long';
     }
     return null;
   }
@@ -130,11 +136,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       AppTextButton(
                         buttonText: 'Create Account',
                         textStyle: TextStyles.font16whitesemibold,
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            // Proceed with the form submission
+                            try {
+                              final credential = await FirebaseAuth.instance
+                                  .createUserWithEmailAndPassword(
+                                email: email.text,
+                                password: password.text,
+                              );
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.success,
+                                animType: AnimType.rightSlide,
+                                title: 'Success',
+                                desc:
+                                    'Congratulations, you have signed up successfully',
+                                btnCancelOnPress: () {},
+                                btnOkOnPress: () {
+                                  context.pushReplacementNamed(
+                                      Routes.homepageScreen);
+                                },
+                              ).show();
+                            } on FirebaseAuthException catch (e) {
+                              if (e.code == 'weak-password') {
+                                // print('The password provided is too weak.');
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.rightSlide,
+                                  title: 'Error',
+                                  desc: 'The password provided is too weak.',
+                                  btnCancelOnPress: () {},
+                                  btnOkOnPress: () {},
+                                ).show();
+                              } else if (e.code == 'email-already-in-use') {
+                                // print('The account already exists for that email.');
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.rightSlide,
+                                  title: 'Error',
+                                  desc:
+                                      'The account already exists for that email.',
+                                  btnCancelOnPress: () {},
+                                  btnOkOnPress: () {},
+                                ).show();
+                              }
+                            } catch (e) {
+                              print(e);
+                            }
                           }
-
                         },
                       ),
                       verticalSpace(16),
