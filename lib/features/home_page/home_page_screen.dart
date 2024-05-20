@@ -1,17 +1,14 @@
-// ignore_for_file: prefer_const_constructors, avoid_print
-
+// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously
 import 'dart:io';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/core/theming/colors.dart';
-import 'package:lip_reading/core/widgets/app_text_button.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:open_file/open_file.dart';
 
 class HomePageScreen extends StatelessWidget {
   const HomePageScreen({super.key});
@@ -35,9 +32,12 @@ class HomePageScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8.0.w),
         child: Column(
           children: [
+            SizedBox(
+              height: 40.h,
+            ),
             GestureDetector(
               onTap: () async {
                 print("Attempting to connect to socket...");
@@ -69,22 +69,6 @@ class HomePageScreen extends StatelessWidget {
                   print('Error connecting to socket: $e');
                   // Handle error
                 }
-                // try {
-                //   var response = await http.get(
-                //     Uri.parse('http://197.49.241.108:5000'),
-                //   );
-
-                //   if (response.statusCode == 200) {
-                //     print('Data fetched successfully!');
-                //     print('Response body: ${response.body}');
-                //     // Handle further processing of response data
-                //   } else {
-                //     print(
-                //         'Failed to fetch data. Status code: ${response.statusCode}');
-                //   }
-                // } catch (e) {
-                //   print('Error fetching data: $e');
-                // }
               },
               child: Container(
                 width: 400.w,
@@ -114,12 +98,46 @@ class HomePageScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            )
+            SizedBox(
+              height: 20.h,
+            ),
+            Spacer(),
+            ElevatedButton(
+              onPressed: () async {
+                pickVideoFile();
+              },
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(ColorsManager.mainBlue),
+              ),
+              child: Text(
+                'Choose File',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void openFile(PlatformFile file) {
+    OpenFile.open(file.path);
+  }
+
+  void pickVideoFile() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.video);
+
+    if (result != null) {
+      // File file = File(result.files.single.path!);
+      final file = result.files.first;
+      openFile(file);
+    } else {
+      // User canceled the picker
+      return;
+    }
   }
 }
