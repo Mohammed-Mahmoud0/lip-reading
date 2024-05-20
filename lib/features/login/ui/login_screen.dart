@@ -8,7 +8,6 @@ import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/features/login/ui/widgets/dont_have_account_text.dart';
 import 'package:lip_reading/features/login/ui/widgets/terms_and_conditions_text.dart';
-
 import '../../../core/helpers/spacing.dart';
 import '../../../core/theming/style.dart';
 import '../../../core/widgets/app_text_button.dart';
