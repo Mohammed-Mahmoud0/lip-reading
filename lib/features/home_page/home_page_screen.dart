@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously, unused_field
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,8 +11,15 @@ import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:open_file/open_file.dart';
 import 'widgets/lip_reading_text.dart';
 
-class HomePageScreen extends StatelessWidget {
+class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
+
+  @override
+  State<HomePageScreen> createState() => _HomePageScreenState();
+}
+
+class _HomePageScreenState extends State<HomePageScreen> {
+  PlatformFile? _pickedFile;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +56,12 @@ class HomePageScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      pickVideoFile();
+                      PlatformFile? pickedFile = await pickVideoFile();
+                      if (pickedFile != null) {
+                        setState(() {
+                          _pickedFile = pickedFile;
+                        });
+                      }
                     },
                     style: ButtonStyle(
                       backgroundColor:
@@ -69,7 +81,11 @@ class HomePageScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      connectAndSendData();
+                      if (_pickedFile != null) {
+                        connectAndSendData(_pickedFile!);
+                      } else {
+                        print("No file selected");
+                      }
                     },
                     style: ButtonStyle(
                       backgroundColor:
@@ -91,17 +107,18 @@ class HomePageScreen extends StatelessWidget {
     );
   }
 
-  void pickVideoFile() async {
+  Future<PlatformFile?> pickVideoFile() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.video);
 
     if (result != null) {
       // File file = File(result.files.single.path!);
       final file = result.files.first;
-      openFile(file);
+      // openFile(file);
+      return file;
     } else {
       // User canceled the picker
-      return;
+      return null;
     }
   }
 
@@ -109,22 +126,25 @@ class HomePageScreen extends StatelessWidget {
     OpenFile.open(file.path);
   }
 
-  void connectAndSendData() async {
+  void connectAndSendData(PlatformFile file) async {
     print("Attempting to connect to socket...");
     try {
       // Establish socket connection
-      Socket socket = await Socket.connect("197.49.241.108", 5000);
+      Socket socket = await Socket.connect("102.40.42.199", 5000);
       print('Connected to socket!');
 
       // Example: Send data
-      socket.write('test.mp4');
-      ByteData bytes = await rootBundle.load('assets/videos/test.mp4');
+      socket.write(file.name);
 
-      var size = bytes.lengthInBytes;
-      socket.write(size);
-      List<int> imageData = bytes.buffer.asUint8List();
-      socket.add(imageData);
+      // Read file as bytes
+      List<int> fileBytes = await File(file.path!).readAsBytes();
+
+      socket.write(fileBytes.length);
+
+      socket.add(fileBytes);
+
       socket.write("<END>");
+
       print("done");
       // Example: Listen for responses
       socket.listen((List<int> data) {
