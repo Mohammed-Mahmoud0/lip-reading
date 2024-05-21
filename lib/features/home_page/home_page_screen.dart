@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/core/theming/colors.dart';
@@ -20,6 +21,8 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   PlatformFile? _pickedFile;
+  var generatedText = '';
+  bool isError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
             SizedBox(
               height: 40.h,
             ),
-            LipReadingText(),
+            LipReadingText(
+              generatedText: generatedText,
+            ),
             SizedBox(
               height: 20.h,
             ),
@@ -114,7 +119,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     if (result != null) {
       // File file = File(result.files.single.path!);
       final file = result.files.first;
-      // openFile(file);
+      openFile(file);
       return file;
     } else {
       // User canceled the picker
@@ -130,7 +135,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     print("Attempting to connect to socket...");
     try {
       // Establish socket connection
-      Socket socket = await Socket.connect("102.40.42.199", 5000);
+      Socket socket = await Socket.connect("102.40.42.199", 5050);
       print('Connected to socket!');
 
       // Example: Send data
@@ -146,8 +151,24 @@ class _HomePageScreenState extends State<HomePageScreen> {
       socket.write("<END>");
 
       print("done");
+
       // Example: Listen for responses
       socket.listen((List<int> data) {
+        if (String.fromCharCodes(data) == 'ERROR') {
+          setState(() {
+            isError = true;
+          });
+        }
+
+        if (String.fromCharCodes(data) != '' && !isError) {
+          showToast(text: 'Success generated', state: ToastStates.SUCCESS);
+          setState(() {
+            generatedText = String.fromCharCodes(data);
+          });
+        } else {
+          showToast(text: generatedText, state: ToastStates.ERROR);
+        }
+        print(generatedText);
         print('Received data: ${String.fromCharCodes(data)}');
         // Handle received data here
       });
@@ -159,4 +180,40 @@ class _HomePageScreenState extends State<HomePageScreen> {
       // Handle error
     }
   }
+}
+
+void showToast({
+  required String text,
+  required ToastStates state,
+}) {
+  Fluttertoast.showToast(
+      msg: text,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: chooseToastColor(state),
+      textColor: Colors.white,
+      fontSize: 16.0);
+}
+
+enum ToastStates {
+  SUCCESS,
+  ERROR,
+  WARNIING,
+}
+
+Color chooseToastColor(ToastStates state) {
+  Color color;
+  switch (state) {
+    case ToastStates.SUCCESS:
+      color = Colors.green;
+      break;
+    case ToastStates.ERROR:
+      color = Colors.red;
+      break;
+    case ToastStates.WARNIING:
+      color = Colors.amber;
+      break;
+  }
+  return color;
 }

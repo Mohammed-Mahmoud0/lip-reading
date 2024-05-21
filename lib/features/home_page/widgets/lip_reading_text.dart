@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lip_reading/core/theming/colors.dart';
 
-
 class LipReadingText extends StatelessWidget {
-  const LipReadingText({
+  var generatedText = '';
+  LipReadingText({
     super.key,
+    required this.generatedText
   });
 
   @override
@@ -23,12 +24,12 @@ class LipReadingText extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
-      child: const Center(
+      child: Center(
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Text(
-            'This is a static text that cannot be edited by the user.',
-            style: TextStyle(
+            generatedText,
+            style: const TextStyle(
               fontSize: 20,
               color: Colors.white,
             ),
