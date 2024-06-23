@@ -9,6 +9,8 @@ import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/core/theming/colors.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:lip_reading/core/theming/style.dart';
+import 'package:lip_reading/core/widgets/app_text_button.dart';
 import 'package:open_file/open_file.dart';
 import 'widgets/lip_reading_text.dart';
 
@@ -56,56 +58,32 @@ class _HomePageScreenState extends State<HomePageScreen> {
               height: 20.h,
             ),
             Spacer(),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      PlatformFile? pickedFile = await pickVideoFile();
-                      if (pickedFile != null) {
-                        setState(() {
-                          _pickedFile = pickedFile;
-                        });
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(ColorsManager.mainBlue),
-                    ),
-                    child: Text(
-                      'Choose File',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 5.w,
-                ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_pickedFile != null) {
-                        connectAndSendData(_pickedFile!);
-                      } else {
-                        print("No file selected");
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(ColorsManager.mainBlue),
-                    ),
-                    child: Text(
-                      'Generate Text',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            AppTextButton(
+              buttonText: 'Choose File',
+              textStyle: TextStyles.font16whitesemibold,
+              onPressed: () async {
+                PlatformFile? pickedFile = await pickVideoFile();
+                if (pickedFile != null) {
+                  setState(() {
+                    _pickedFile = pickedFile;
+                  });
+                }
+              },
             ),
+            SizedBox(
+              height: 8.h,
+            ),
+            AppTextButton(
+              buttonText: 'Generate Text',
+              textStyle: TextStyles.font16whitesemibold,
+              onPressed: () async {
+                if (_pickedFile != null) {
+                  connectAndSendData(_pickedFile!);
+                } else {
+                  print("No file selected");
+                }
+              },
+            )
           ],
         ),
       ),
