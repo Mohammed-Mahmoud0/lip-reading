@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously, unused_field
+// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously, unused_field, constant_identifier_names, unused_import
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +23,7 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   PlatformFile? _pickedFile;
-  var generatedText = '';
+  var generatedText = 'generated text will appear here...';
   bool isError = false;
 
   @override
@@ -177,7 +177,7 @@ void showToast({
 enum ToastStates {
   SUCCESS,
   ERROR,
-  WARNIING,
+  WARNING,
 }
 
 Color chooseToastColor(ToastStates state) {
@@ -189,7 +189,7 @@ Color chooseToastColor(ToastStates state) {
     case ToastStates.ERROR:
       color = Colors.red;
       break;
-    case ToastStates.WARNIING:
+    case ToastStates.WARNING:
       color = Colors.amber;
       break;
   }

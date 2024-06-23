@@ -55,6 +55,8 @@ dependencies:
   video_player: ^2.8.6
 
   fluttertoast: ^8.2.5
+
+  animated_text_kit: ^4.2.1
   
   
 
