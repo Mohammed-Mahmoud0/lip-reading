@@ -12,6 +12,7 @@ import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:lip_reading/core/theming/style.dart';
 import 'package:lip_reading/core/widgets/app_text_button.dart';
 import 'package:open_file/open_file.dart';
+import 'package:video_player/video_player.dart';
 import 'widgets/lip_reading_text.dart';
 
 class HomePageScreen extends StatefulWidget {
@@ -23,8 +24,15 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   PlatformFile? _pickedFile;
+  VideoPlayerController? _videoPlayerController;
   var generatedText = 'generated text will appear here...';
   bool isError = false;
+
+  @override
+  void dispose() {
+    _videoPlayerController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,62 +56,99 @@ class _HomePageScreenState extends State<HomePageScreen> {
             },
             icon: const Icon(
               Icons.logout,
-              color:  ColorsManager.mainBlue,
+              color: ColorsManager.mainBlue,
             ),
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/lipReading_logo_low_opacity.png"), // Your logo image path
-            fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image:
+                  AssetImage("assets/images/lipReading_logo_low_opacity.png"),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8.0.w),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 32.h,
-              ),
-              LipReadingText(
-                generatedText: generatedText,
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
-              Spacer(),
-              AppTextButton(
-                buttonText: 'Choose File',
-                textStyle: TextStyles.font16whitesemibold,
-                onPressed: () async {
-                  PlatformFile? pickedFile = await pickVideoFile();
-                  if (pickedFile != null) {
-                    setState(() {
-                      _pickedFile = pickedFile;
-                    });
-                  }
-                },
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              AppTextButton(
-                buttonText: 'Generate Text',
-                textStyle: TextStyles.font16whitesemibold,
-                onPressed: () async {
-                  if (_pickedFile != null) {
-                    connectAndSendData(_pickedFile!);
-                  } else {
-                    print("No file selected");
-                  }
-                },
-              ),
-              SizedBox(
-                height: 40.h,
-              ),
-            ],
+          child: Padding(
+            padding: EdgeInsets.all(8.0.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 16.h,
+                ),
+                LipReadingText(
+                  generatedText: generatedText,
+                ),
+                SizedBox(
+                  height: 85.h,
+                ),
+                if (_videoPlayerController != null &&
+                    _videoPlayerController!.value.isInitialized)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_videoPlayerController!.value.isPlaying) {
+                          _videoPlayerController!.pause();
+                        } else {
+                          _videoPlayerController!.play();
+                        }
+                      });
+                    },
+                    child: Center(
+                      child: AspectRatio(
+                        aspectRatio: _videoPlayerController!.value.aspectRatio,
+                        child: VideoPlayer(_videoPlayerController!),
+                      ),
+                    ),
+                  ),
+                // Spacer(),
+                if (_videoPlayerController != null)
+                  SizedBox(
+                    height: 85.h,
+                  ),
+                if (_videoPlayerController == null)
+                  SizedBox(
+                    height: 300.h,
+                  ),
+                AppTextButton(
+                  buttonText: 'Choose File',
+                  textStyle: TextStyles.font16whitesemibold,
+                  onPressed: () async {
+                    PlatformFile? pickedFile = await pickVideoFile();
+                    if (pickedFile != null) {
+                      setState(() {
+                        _pickedFile = pickedFile;
+                        _videoPlayerController =
+                            VideoPlayerController.file(File(_pickedFile!.path!))
+                              ..initialize().then((_) {
+                                setState(() {});
+                                // _videoPlayerController!.play();
+                              });
+                      });
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                AppTextButton(
+                  buttonText: 'Generate Text',
+                  textStyle: TextStyles.font16whitesemibold,
+                  onPressed: () async {
+                    if (_pickedFile != null) {
+                      connectAndSendData(_pickedFile!);
+                    } else {
+                      print("No file selected");
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 40.h,
+                ),
+              ],
+            ),
           ),
         ),
       ),
