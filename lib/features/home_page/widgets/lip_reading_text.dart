@@ -15,7 +15,7 @@ class LipReadingText extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue,
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.circular(16.0),
         gradient: const LinearGradient(
           colors: [ColorsManager.mainBlue, Colors.blue],
           begin: Alignment.topLeft,
@@ -29,7 +29,7 @@ class LipReadingText extends StatelessWidget {
               ? AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
-                      'Extracting text, please wait ...',
+                      'Extracting text, Please wait ...',
                       textStyle: const TextStyle(
                         fontSize: 24,
                         color: Colors.white,
@@ -41,14 +41,30 @@ class LipReadingText extends StatelessWidget {
                   isRepeatingAnimation: true,
                   repeatForever: true,
                 )
-              : Text(
-                  generatedText,
-                  key: ValueKey<String>(generatedText),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
+              : Column(
+                  children: [
+                    const Text(
+                      'Extracted Text: ',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                    Text(
+                      generatedText,
+                      key: ValueKey<String>(generatedText),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
         ),
       ),

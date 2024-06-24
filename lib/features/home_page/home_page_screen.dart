@@ -30,7 +30,15 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('home page'),
+        title: Text(
+          'Home Page',
+          style: TextStyle(
+            fontFamily: 'Georgia',
+            fontWeight: FontWeight.bold,
+            color: ColorsManager.mainBlue,
+          ),
+        ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () async {
@@ -39,52 +47,64 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   predicate: (Route<dynamic> route) => false);
             },
             icon: const Icon(
-              Icons.exit_to_app,
+              Icons.logout,
+              color:  ColorsManager.mainBlue,
             ),
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.all(8.0.w),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 40.h,
-            ),
-            LipReadingText(
-              generatedText: generatedText,
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            Spacer(),
-            AppTextButton(
-              buttonText: 'Choose File',
-              textStyle: TextStyles.font16whitesemibold,
-              onPressed: () async {
-                PlatformFile? pickedFile = await pickVideoFile();
-                if (pickedFile != null) {
-                  setState(() {
-                    _pickedFile = pickedFile;
-                  });
-                }
-              },
-            ),
-            SizedBox(
-              height: 8.h,
-            ),
-            AppTextButton(
-              buttonText: 'Generate Text',
-              textStyle: TextStyles.font16whitesemibold,
-              onPressed: () async {
-                if (_pickedFile != null) {
-                  connectAndSendData(_pickedFile!);
-                } else {
-                  print("No file selected");
-                }
-              },
-            )
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/lipReading_logo_low_opacity.png"), // Your logo image path
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8.0.w),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 32.h,
+              ),
+              LipReadingText(
+                generatedText: generatedText,
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              Spacer(),
+              AppTextButton(
+                buttonText: 'Choose File',
+                textStyle: TextStyles.font16whitesemibold,
+                onPressed: () async {
+                  PlatformFile? pickedFile = await pickVideoFile();
+                  if (pickedFile != null) {
+                    setState(() {
+                      _pickedFile = pickedFile;
+                    });
+                  }
+                },
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              AppTextButton(
+                buttonText: 'Generate Text',
+                textStyle: TextStyles.font16whitesemibold,
+                onPressed: () async {
+                  if (_pickedFile != null) {
+                    connectAndSendData(_pickedFile!);
+                  } else {
+                    print("No file selected");
+                  }
+                },
+              ),
+              SizedBox(
+                height: 40.h,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -113,7 +133,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     print("Attempting to connect to socket...");
     try {
       // Establish socket connection
-      Socket socket = await Socket.connect("102.40.42.199", 5050);
+      Socket socket = await Socket.connect("197.49.156.63", 5050);
       print('Connected to socket!');
 
       // Example: Send data
