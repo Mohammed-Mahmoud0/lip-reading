@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/routing/routes.dart';
 import 'package:lip_reading/core/theming/colors.dart';
@@ -62,6 +63,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -152,6 +154,25 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          PlatformFile? pickedFile = await takeVideoFromCamera();
+          if (pickedFile != null) {
+            setState(() {
+              _pickedFile = pickedFile;
+              _videoPlayerController =
+                  VideoPlayerController.file(File(_pickedFile!.path!))
+                    ..initialize().then((_) {
+                      setState(() {});
+                      // _videoPlayerController!.play();
+                    });
+            });
+          }
+        },
+        backgroundColor: Colors.blue,
+        child: Icon(Icons.camera_alt),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -162,10 +183,27 @@ class _HomePageScreenState extends State<HomePageScreen> {
     if (result != null) {
       // File file = File(result.files.single.path!);
       final file = result.files.first;
-      openFile(file);
+      // openFile(file);
       return file;
     } else {
       // User canceled the picker
+      return null;
+    }
+  }
+
+  Future<PlatformFile?> takeVideoFromCamera() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+
+    if (video != null) {
+      File videoFile = File(video.path);
+      return PlatformFile(
+        name: video.name,
+        path: video.path,
+        size: await videoFile.length(),
+        bytes: await videoFile.readAsBytes(),
+      );
+    } else {
       return null;
     }
   }
@@ -178,7 +216,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     print("Attempting to connect to socket...");
     try {
       // Establish socket connection
-      Socket socket = await Socket.connect("197.49.156.63", 5050);
+      Socket socket = await Socket.connect("197.49.231.226", 5050);
       print('Connected to socket!');
 
       // Example: Send data
@@ -204,7 +242,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         }
 
         if (String.fromCharCodes(data) != '' && !isError) {
-          showToast(text: 'Success generated', state: ToastStates.SUCCESS);
+          showToast(text: 'Success Extracted', state: ToastStates.SUCCESS);
           setState(() {
             generatedText = String.fromCharCodes(data);
           });
@@ -232,7 +270,7 @@ void showToast({
   Fluttertoast.showToast(
       msg: text,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.TOP,
       timeInSecForIosWeb: 5,
       backgroundColor: chooseToastColor(state),
       textColor: Colors.white,
