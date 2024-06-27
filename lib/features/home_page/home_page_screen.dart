@@ -161,25 +161,25 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     PlatformFile? pickedFile = await takeVideoFromCamera();
-      //     if (pickedFile != null) {
-      //       setState(() {
-      //         _pickedFile = pickedFile;
-      //         _videoPlayerController =
-      //             VideoPlayerController.file(File(_pickedFile!.path!))
-      //               ..initialize().then((_) {
-      //                 setState(() {});
-      //                 // _videoPlayerController!.play();
-      //               });
-      //       });
-      //     }
-      //   },
-      //   backgroundColor: Colors.blue,
-      //   child: Icon(Icons.camera_alt),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          PlatformFile? pickedFile = await takeVideoFromCamera();
+          if (pickedFile != null) {
+            setState(() {
+              _pickedFile = pickedFile;
+              _videoPlayerController =
+                  VideoPlayerController.file(File(_pickedFile!.path!))
+                    ..initialize().then((_) {
+                      setState(() {});
+                      // _videoPlayerController!.play();
+                    });
+            });
+          }
+        },
+        backgroundColor: Colors.blue,
+        child: Icon(Icons.camera_alt),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -198,22 +198,22 @@ class _HomePageScreenState extends State<HomePageScreen> {
     }
   }
 
-  // Future<PlatformFile?> takeVideoFromCamera() async {
-  //   final ImagePicker _picker = ImagePicker();
-  //   final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
-  //
-  //   if (video != null) {
-  //     File videoFile = File(video.path);
-  //     return PlatformFile(
-  //       name: video.name,
-  //       path: video.path,
-  //       size: await videoFile.length(),
-  //       bytes: await videoFile.readAsBytes(),
-  //     );
-  //   } else {
-  //     return null;
-  //   }
-  // }
+  Future<PlatformFile?> takeVideoFromCamera() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+
+    if (video != null) {
+      File videoFile = File(video.path);
+      return PlatformFile(
+        name: video.name,
+        path: video.path,
+        size: await videoFile.length(),
+        bytes: await videoFile.readAsBytes(),
+      );
+    } else {
+      return null;
+    }
+  }
 
   void openFile(PlatformFile file) {
     OpenFile.open(file.path);
@@ -232,7 +232,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
       // Read file as bytes
       List<int> fileBytes = await File(file.path!).readAsBytes();
 
-      socket.write(fileBytes.length);
+      // socket.write(fileBytes.length);
 
       socket.add(fileBytes);
 
@@ -242,21 +242,21 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
       // Example: Listen for responses
       socket.listen((List<int> data) {
-        if (String.fromCharCodes(data) == 'ERROR') {
-          setState(() {
-            isError = true;
-            generatedText = 'Error occurred while extracting text';
-          });
-        }
+        // if (String.fromCharCodes(data) == 'ERROR') {
+        //   setState(() {
+        //     isError = true;
+        //     generatedText = 'Error occurred while extracting text';
+        //   });
+        // }
 
-        if (String.fromCharCodes(data) != '' && !isError) {
+        // if (String.fromCharCodes(data) != '' && !isError) {
           showToast(text: 'Success Extracted', state: ToastStates.SUCCESS);
           setState(() {
             generatedText = String.fromCharCodes(data);
           });
-        } else {
-          showToast(text: generatedText, state: ToastStates.ERROR);
-        }
+        // } else {
+        //   showToast(text: generatedText, state: ToastStates.ERROR);
+        // }
         print(generatedText);
         print('Received data: ${String.fromCharCodes(data)}');
         // Handle received data here

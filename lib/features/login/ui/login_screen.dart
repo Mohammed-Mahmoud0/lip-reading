@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lip_reading/core/helpers/extensions.dart';
 import 'package:lip_reading/core/routing/routes.dart';
+import 'package:lip_reading/core/theming/colors.dart';
 import 'package:lip_reading/features/login/ui/widgets/dont_have_account_text.dart';
 import 'package:lip_reading/features/login/ui/widgets/terms_and_conditions_text.dart';
 import '../../../core/helpers/spacing.dart';
@@ -134,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 print('No user found for that email.');
                               } else if (e.code == 'wrong-password') {
                                 print('Wrong password provided for that user.');
-                              }                           
+                              }
                               AwesomeDialog(
                                 context: context,
                                 dialogType: DialogType.error,
@@ -152,6 +153,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       const TermsAndConditionsText(),
                       verticalSpace(60),
                       const DontHaveAccountText(),
+                      const Text(
+                        'or',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.pushNamed(
+                              Routes.homepageScreen);
+                        },
+                        child: Text(
+                          'Continue as a guest',
+                          style: TextStyles.font13BlueSemiBold,
+                        ),
+                      )
                     ],
                   ),
                 ),
