@@ -26,7 +26,7 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen> {
   PlatformFile? _pickedFile;
   VideoPlayerController? _videoPlayerController;
-  var generatedText = 'generated text will appear here...';
+  var generatedText = 'Please select a video';
   bool isError = false;
 
   @override
@@ -132,8 +132,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
                             VideoPlayerController.file(File(_pickedFile!.path!))
                               ..initialize().then((_) {
                                 setState(() {});
-                                // _videoPlayerController!.play();
+
                               });
+                        generatedText = 'Great! Now click Generate Text to proceed.';
                       });
                     }
                   },
@@ -146,6 +147,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   textStyle: TextStyles.font16whitesemibold,
                   onPressed: () async {
                     if (_pickedFile != null) {
+                      setState(() {
+                        generatedText = 'Extracting text, Please wait ...';
+                      });
                       connectAndSendData(_pickedFile!);
                     } else {
                       print("No file selected");
@@ -241,6 +245,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         if (String.fromCharCodes(data) == 'ERROR') {
           setState(() {
             isError = true;
+            generatedText = 'Error occurred while extracting text';
           });
         }
 

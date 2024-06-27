@@ -6,6 +6,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 // ignore: must_be_immutable
 class LipReadingText extends StatelessWidget {
   var generatedText = '';
+
   LipReadingText({super.key, required this.generatedText});
 
   @override
@@ -26,17 +27,22 @@ class LipReadingText extends StatelessWidget {
       child: Center(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          child: generatedText == 'generated text will appear here...'
+          child: generatedText == 'Please select a video' ||
+                  generatedText ==
+                      'Great! Now click Generate Text to proceed.' ||
+                  generatedText == 'Extracting text, Please wait ...' ||
+                  generatedText == 'Error occurred while extracting text'
               ? AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
-                      'Extracting text, Please wait ...',
+                      generatedText,
                       textStyle: const TextStyle(
                         fontSize: 24,
                         color: Colors.white,
                         fontFamily: 'Georgia',
                       ),
                       speed: const Duration(milliseconds: 100),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                   isRepeatingAnimation: true,
@@ -44,14 +50,21 @@ class LipReadingText extends StatelessWidget {
                 )
               : Column(
                   children: [
-                    const Text(
-                      'Extracted Text: ',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
+                    AnimatedTextKit(
+                      animatedTexts: [
+                        TypewriterAnimatedText(
+                          'Extracted Text!',
+                          textStyle: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontFamily: 'Georgia',
+                          ),
+                          speed: const Duration(milliseconds: 100),
+                        ),
+                      ],
+                      isRepeatingAnimation: true,
+                      repeatForever: true,
                     ),
                     SizedBox(
                       height: 5.h,
