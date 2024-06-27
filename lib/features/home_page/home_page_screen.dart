@@ -78,13 +78,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 16.h,
-                ),
-                LipReadingText(
-                  generatedText: generatedText,
-                ),
-                SizedBox(
-                  height: 85.h,
+                  height: 32.h,
                 ),
                 if (_videoPlayerController != null &&
                     _videoPlayerController!.value.isInitialized)
@@ -105,15 +99,27 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       ),
                     ),
                   ),
-                // Spacer(),
                 if (_videoPlayerController != null)
                   SizedBox(
-                    height: 85.h,
+                    height: 50.h,
                   ),
                 if (_videoPlayerController == null)
-                  SizedBox(
-                    height: 300.h,
+                  Center(
+                    child: Image.asset(
+                      'assets/images/no-video0.png',
+                      height: 250.h,
+                      width: 250.w,
+                    ),
                   ),
+                SizedBox(
+                  height: 70.h,
+                ),
+                LipReadingText(
+                  generatedText: generatedText,
+                ),
+                SizedBox(
+                  height: 40.h,
+                ),
                 AppTextButton(
                   buttonText: 'Choose File',
                   textStyle: TextStyles.font16whitesemibold,
@@ -146,33 +152,30 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     }
                   },
                 ),
-                SizedBox(
-                  height: 40.h,
-                ),
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          PlatformFile? pickedFile = await takeVideoFromCamera();
-          if (pickedFile != null) {
-            setState(() {
-              _pickedFile = pickedFile;
-              _videoPlayerController =
-                  VideoPlayerController.file(File(_pickedFile!.path!))
-                    ..initialize().then((_) {
-                      setState(() {});
-                      // _videoPlayerController!.play();
-                    });
-            });
-          }
-        },
-        backgroundColor: Colors.blue,
-        child: Icon(Icons.camera_alt),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     PlatformFile? pickedFile = await takeVideoFromCamera();
+      //     if (pickedFile != null) {
+      //       setState(() {
+      //         _pickedFile = pickedFile;
+      //         _videoPlayerController =
+      //             VideoPlayerController.file(File(_pickedFile!.path!))
+      //               ..initialize().then((_) {
+      //                 setState(() {});
+      //                 // _videoPlayerController!.play();
+      //               });
+      //       });
+      //     }
+      //   },
+      //   backgroundColor: Colors.blue,
+      //   child: Icon(Icons.camera_alt),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -191,22 +194,22 @@ class _HomePageScreenState extends State<HomePageScreen> {
     }
   }
 
-  Future<PlatformFile?> takeVideoFromCamera() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
-
-    if (video != null) {
-      File videoFile = File(video.path);
-      return PlatformFile(
-        name: video.name,
-        path: video.path,
-        size: await videoFile.length(),
-        bytes: await videoFile.readAsBytes(),
-      );
-    } else {
-      return null;
-    }
-  }
+  // Future<PlatformFile?> takeVideoFromCamera() async {
+  //   final ImagePicker _picker = ImagePicker();
+  //   final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+  //
+  //   if (video != null) {
+  //     File videoFile = File(video.path);
+  //     return PlatformFile(
+  //       name: video.name,
+  //       path: video.path,
+  //       size: await videoFile.length(),
+  //       bytes: await videoFile.readAsBytes(),
+  //     );
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   void openFile(PlatformFile file) {
     OpenFile.open(file.path);
@@ -216,7 +219,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     print("Attempting to connect to socket...");
     try {
       // Establish socket connection
-      Socket socket = await Socket.connect("197.49.231.226", 5050);
+      Socket socket = await Socket.connect("192.168.1.7", 5050);
       print('Connected to socket!');
 
       // Example: Send data
@@ -270,7 +273,7 @@ void showToast({
   Fluttertoast.showToast(
       msg: text,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.TOP,
+      gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
       backgroundColor: chooseToastColor(state),
       textColor: Colors.white,

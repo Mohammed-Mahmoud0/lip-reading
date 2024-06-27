@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lip_reading/core/theming/colors.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
+// ignore: must_be_immutable
 class LipReadingText extends StatelessWidget {
   var generatedText = '';
   LipReadingText({super.key, required this.generatedText});
