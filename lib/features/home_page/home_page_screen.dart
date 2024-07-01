@@ -1,5 +1,6 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously, unused_field, constant_identifier_names, unused_import
+// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously, unused_field, constant_identifier_names, unused_import, no_leading_underscores_for_local_identifiers
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:lip_reading/core/theming/colors.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:lip_reading/core/theming/style.dart';
 import 'package:lip_reading/core/widgets/app_text_button.dart';
+import 'package:lip_reading/features/home_page/widgets/pop_up_widget.dart';
 import 'package:open_file/open_file.dart';
 import 'package:video_player/video_player.dart';
 import 'widgets/lip_reading_text.dart';
@@ -28,6 +30,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
   VideoPlayerController? _videoPlayerController;
   var generatedText = 'Please select a video';
   bool isError = false;
+  var ip = '192.168.1.12';
+  var port = 5050;
 
   @override
   void dispose() {
@@ -49,6 +53,25 @@ class _HomePageScreenState extends State<HomePageScreen> {
         ),
         automaticallyImplyLeading: false,
         actions: [
+          IconButton(
+              onPressed: () async {
+                final result = await showDialog<Map<String, dynamic>>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return IpPopup();
+                  },
+                );
+                if (result != null) {
+                  setState(() {
+                    ip = result['ip'];
+                    port = result['port'];
+                  });
+                }
+              },
+              icon: Icon(
+                Icons.sensors_rounded,
+                color: ColorsManager.mainBlue,
+              )),
           IconButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
@@ -132,9 +155,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
                             VideoPlayerController.file(File(_pickedFile!.path!))
                               ..initialize().then((_) {
                                 setState(() {});
-
                               });
-                        generatedText = 'Great! Now click Generate Text to proceed.';
+                        generatedText =
+                            'Great! Now click Generate Text to proceed.';
                       });
                     }
                   },
@@ -223,7 +246,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
     print("Attempting to connect to socket...");
     try {
       // Establish socket connection
-      Socket socket = await Socket.connect("192.168.1.7", 5050);
+      print("***********************************");
+      print(ip);
+      print(port);
+      print("***********************************");
+      Socket socket = await Socket.connect(ip, port);
       print('Connected to socket!');
 
       // Example: Send data
@@ -242,21 +269,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
       // Example: Listen for responses
       socket.listen((List<int> data) {
-        // if (String.fromCharCodes(data) == 'ERROR') {
-        //   setState(() {
-        //     isError = true;
-        //     generatedText = 'Error occurred while extracting text';
-        //   });
-        // }
+        showToast(text: 'Success Extracted', state: ToastStates.SUCCESS);
+        setState(() {
+          generatedText = String.fromCharCodes(data);
+        });
 
-        // if (String.fromCharCodes(data) != '' && !isError) {
-          showToast(text: 'Success Extracted', state: ToastStates.SUCCESS);
-          setState(() {
-            generatedText = String.fromCharCodes(data);
-          });
-        // } else {
-        //   showToast(text: generatedText, state: ToastStates.ERROR);
-        // }
         print(generatedText);
         print('Received data: ${String.fromCharCodes(data)}');
         // Handle received data here
